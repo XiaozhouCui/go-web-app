@@ -18,6 +18,6 @@
 - Create empty folders _cmd/web_, _pkg/handlers_ and _pkg/render_
 - Move _main.go_ into _cmd/web_, move _handlers.go_ into _pkg/handlers_, move _render.go_ into _pkg/render_
 - In _render.go_, update first line to `package render`, rename the `renderTemplate` with capital camel case: `RenderTemplate`
-- In _handlers.go_, update first line to `package handlers`, replace the `renderTemplate` with `render.RenderTemplate`
-- In _main.go_, replace `Home` with `handlers.Home`
+- In _handlers.go_, update first line to `package handlers`, import `gowebapp/pkg/render`, replace the `renderTemplate` with `render.RenderTemplate`
+- In _main.go_, import `gowebapp/pkg/handlers`, replace `Home` with `handlers.Home`, replace `About` with `handlers.About`
 - To run the refactored app, run `go run cmd/web/*.go`
