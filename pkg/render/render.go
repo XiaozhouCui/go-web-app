@@ -10,10 +10,10 @@ import (
 
 // RenderTemplate renders templates, tmpl is the file name (e.g. home.page.tmpl)
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// create a map (tc) to cache all templates in "./templates/"
-	tc, err := createTemplateCache()
-	// if there is an error, kill the app
+	// get template cache from app config
+	tc, err := CreateTemplateCache()
 	if err != nil {
+		// if there is an error, kill the app
 		log.Fatal(err) // this includes os.Exit(1)
 	}
 
@@ -26,21 +26,18 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer) // create buffer to hold bytes
 
-	err = t.Execute(buf, nil) // write template to buffer, and check for errors
-	if err != nil {
-		log.Println(err)
-	}
+	_ = t.Execute(buf, nil) // write template to buffer
 
 	// render the template
-	_, err = buf.WriteTo(w) // write template from buffer to response
+	_, err = buf.WriteTo(w) // write from buffer to http response
 	if err != nil {
-		log.Println(err)
+		log.Println("Error writing template to browser", err)
 	}
 }
 
-// loading template files from disk on every request is expensive, need cache
+// Cache templates to avoid loading template files from disk on every request
 // it returns a map (myCache) and an error
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	// create an empty map to cache templates
 	myCache := map[string]*template.Template{}
 
