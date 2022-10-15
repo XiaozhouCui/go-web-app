@@ -2,26 +2,39 @@ package render
 
 import (
 	"bytes"
+	"gowebapp/pkg/config"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 )
 
-// RenderTemplate renders templates, tmpl is the file name (e.g. home.page.tmpl)
+var app *config.AppConfig
+
+// NewTemplates sets the config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
+// RenderTemplate renders templates using html/template
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// get template cache from app config
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		// if there is an error, kill the app
-		log.Fatal(err) // this includes os.Exit(1)
+	// declare template cache (tc) as a map
+	var tc map[string]*template.Template
+
+	// get preference "UseCache" from app config
+	if app.UseCache {
+		// get template cache from app config
+		tc = app.TemplateCache
+	} else {
+		// rebuild the template cache
+		tc, _ = CreateTemplateCache()
 	}
 
-	// get requested template from cache
-	t, ok := tc[tmpl]
+	// get requested template (t) from cache
+	t, ok := tc[tmpl] // tmpl is the file name (e.g. "home.page.tmpl")
 	if !ok {
 		// if template not found, kill the app
-		log.Fatal(err)
+		log.Fatal("Could not get template from template cache")
 	}
 
 	buf := new(bytes.Buffer) // create buffer to hold bytes
@@ -29,7 +42,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 	_ = t.Execute(buf, nil) // write template to buffer
 
 	// render the template
-	_, err = buf.WriteTo(w) // write from buffer to http response
+	_, err := buf.WriteTo(w) // write from buffer to http response
 	if err != nil {
 		log.Println("Error writing template to browser", err)
 	}
