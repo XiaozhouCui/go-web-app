@@ -1,29 +1,45 @@
 package render
 
 import (
-	"fmt"
+	"bytes"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 )
 
-// RenderTemplate renders templates using html/templates
+// RenderTemplate renders templates, tmpl is the file name (e.g. home.page.tmpl)
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// create a template cache
+	// create a map (tc) to cache all templates in "./templates/"
+	tc, err := createTemplateCache()
+	// if there is an error, kill the app
+	if err != nil {
+		log.Fatal(err) // this includes os.Exit(1)
+	}
 
 	// get requested template from cache
+	t, ok := tc[tmpl]
+	if !ok {
+		// if template not found, kill the app
+		log.Fatal(err)
+	}
+
+	buf := new(bytes.Buffer) // create buffer to hold bytes
+
+	err = t.Execute(buf, nil) // write template to buffer, and check for errors
+	if err != nil {
+		log.Println(err)
+	}
 
 	// render the template
-
-	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
-	err := parsedTemplate.Execute(w, nil)
+	_, err = buf.WriteTo(w) // write template from buffer to response
 	if err != nil {
-		fmt.Println("error parsing template:", err)
-		return
+		log.Println(err)
 	}
 }
 
 // loading template files from disk on every request is expensive, need cache
+// it returns a map (myCache) and an error
 func createTemplateCache() (map[string]*template.Template, error) {
 	// create an empty map to cache templates
 	myCache := map[string]*template.Template{}
@@ -43,7 +59,7 @@ func createTemplateCache() (map[string]*template.Template, error) {
 			return myCache, err
 		}
 
-		// find layout templates
+		// find all layout-templates
 		matches, err := filepath.Glob("./templates/*.layout.tmpl")
 		if err != nil {
 			return myCache, err
