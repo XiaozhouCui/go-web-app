@@ -30,16 +30,18 @@ func main() {
 	repo := handlers.NewRepo(&app)
 	// pass the repo back to the handlers
 	handlers.NewHandlers(repo)
-
 	// give render package access to the app config
 	render.NewTemplates(&app) // reference to app using pointer
 
-	// handler function to handle http request
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
-
 	// print in terminal
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
-	// listening to localhost:8080
-	_ = http.ListenAndServe(portNumber, nil)
+
+	// create a server
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	log.Fatal(err)
 }

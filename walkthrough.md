@@ -21,3 +21,8 @@
 - In _handlers.go_, update first line to `package handlers`, import `gowebapp/pkg/render`, replace the `renderTemplate` with `render.RenderTemplate`
 - In _main.go_, import `gowebapp/pkg/handlers`, replace `Home` with `handlers.Home`, replace `About` with `handlers.About`
 - To run the refactored app, run `go run cmd/web/*.go`
+
+## Use third party package
+
+- Use **"pat"** to handle routes, run `go get github.com/bmizerany/pat`
+- This will create _go.sum_ and update _go.mod_
