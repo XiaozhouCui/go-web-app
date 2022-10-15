@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"gowebapp/pkg/config"
+	"gowebapp/pkg/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,8 +17,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
 // RenderTemplate renders templates using html/template
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	// declare template cache (tc) as a map
 	var tc map[string]*template.Template
 
@@ -39,7 +44,9 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer) // create buffer to hold bytes
 
-	_ = t.Execute(buf, nil) // write template to buffer
+	td = AddDefaultData(td)
+
+	_ = t.Execute(buf, td) // write template to buffer, with template data
 
 	// render the template
 	_, err := buf.WriteTo(w) // write from buffer to http response
