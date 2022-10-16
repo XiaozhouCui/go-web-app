@@ -30,3 +30,4 @@
 - This will update _go.sum_ and _go.mod_
 - To remove unused packages, run `go mod tidy`
 - This will remove the unused packeges from _go.sum_ and _go.mod_
+- Install nosurf: `go get github.com/justinas/nosurf`
