@@ -5,15 +5,19 @@ import (
 	"gowebapp/pkg/handlers"
 	"net/http"
 
-	"github.com/bmizerany/pat"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 func routes(app *config.AppConfig) http.Handler {
 	// create a multiplexer (mux)
-	mux := pat.New() // pat is a 3rd-party package
+	mux := chi.NewRouter()
 
-	mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
-	mux.Get("/about", http.HandlerFunc(handlers.Repo.About))
+	// use Recoverer middleware
+	mux.Use(middleware.Recoverer)
+
+	mux.Get("/", handlers.Repo.Home)
+	mux.Get("/about", handlers.Repo.About)
 
 	return mux
 }

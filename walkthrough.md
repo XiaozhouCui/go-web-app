@@ -22,7 +22,11 @@
 - In _main.go_, import `gowebapp/pkg/handlers`, replace `Home` with `handlers.Home`, replace `About` with `handlers.About`
 - To run the refactored app, run `go run cmd/web/*.go`
 
-## Use third party package
+## Use third party packages
 
-- Use **"pat"** to handle routes, run `go get github.com/bmizerany/pat`
+- Install **"pat"** to handle routes, run `go get github.com/bmizerany/pat`
 - This will create _go.sum_ and update _go.mod_
+- Install **"chi"** to handle routes, run `go get -u github.com/go-chi/chi`
+- This will update _go.sum_ and _go.mod_
+- To remove unused packages, run `go mod tidy`
+- This will remove the unused packeges from _go.sum_ and _go.mod_
