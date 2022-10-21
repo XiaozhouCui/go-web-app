@@ -31,3 +31,9 @@
 - To remove unused packages, run `go mod tidy`
 - This will remove the unused packeges from _go.sum_ and _go.mod_
 - Install nosurf: `go get github.com/justinas/nosurf`
+
+## Session management
+
+- Install SCS for HTTP Session Management
+- Run `go get github.com/alexedwards/scs/v2`
+- In _main.go_ initialise SCS: `session := scs.New()`

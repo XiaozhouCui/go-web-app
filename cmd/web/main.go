@@ -7,6 +7,9 @@ import (
 	"gowebapp/pkg/render"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 // package level variable
@@ -15,6 +18,10 @@ const portNumber = ":8080"
 func main() {
 	// create a global app config variable
 	var app config.AppConfig
+
+	// initialise session
+	session := scs.New()
+	session.Lifetime = 24 * time.Hour
 
 	// create a map (tc) to cache all templates
 	tc, err := render.CreateTemplateCache()
