@@ -1,21 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/justinas/nosurf"
 )
 
-func WriteToConsole(next http.Handler) http.Handler {
-	// cast an anonymous func to HandlerFunc
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Hit the page")
-		next.ServeHTTP(w, r)
-	})
-}
-
-// NoSurf creates no surf token
+// NoSurf adds CSRF protection to all POST requests
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 
@@ -28,4 +19,10 @@ func NoSurf(next http.Handler) http.Handler {
 	})
 
 	return csrfHandler
+}
+
+// SessionLoad loads and saves session on every request
+func SessionLoad(next http.Handler) http.Handler {
+	// it lets web server to remember state using sessions
+	return session.LoadAndSave(next)
 }
