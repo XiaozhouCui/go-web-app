@@ -15,13 +15,26 @@ import (
 // package level variable
 const portNumber = ":8080"
 
+// global app config variable
+var app config.AppConfig
+
+// pointer to scs.SessionManager
+var session *scs.SessionManager
+
 func main() {
-	// create a global app config variable
-	var app config.AppConfig
+
+	// change this to true when in production
+	app.InProduction = false
 
 	// initialise session
-	session := scs.New()
-	session.Lifetime = 24 * time.Hour
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour              // keep session for 24 hours
+	session.Cookie.Persist = true                  // keep session after browser close
+	session.Cookie.SameSite = http.SameSiteLaxMode // default SameSite attribute
+	session.Cookie.Secure = app.InProduction       // encrypted (https)
+
+	// save session into global app config
+	app.Session = session
 
 	// create a map (tc) to cache all templates
 	tc, err := render.CreateTemplateCache()

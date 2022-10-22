@@ -23,7 +23,7 @@ func NoSurf(next http.Handler) http.Handler {
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
 		Path:     "/",
-		Secure:   false,
+		Secure:   app.InProduction, // encrypted (https)
 		SameSite: http.SameSiteLaxMode,
 	})
 
